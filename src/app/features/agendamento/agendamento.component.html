@@ -1,0 +1,212 @@
+<div class="min-h-screen bg-barber-dark text-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-2xl mx-auto space-y-8">
+
+    <!-- Header Principal & Status da API -->
+    <header class="text-center space-y-3">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border"
+           [ngClass]="apiOnline() ? 'bg-emerald-950/60 border-emerald-600/50 text-emerald-400' : 'bg-amber-950/60 border-amber-600/50 text-amber-400'">
+        <span class="w-2 h-2 rounded-full" [ngClass]="apiOnline() ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'"></span>
+        @if (apiOnline()) {
+          <span>API Spring Boot Conectada (v{{ apiStatus()?.versao }})</span>
+        } @else {
+          <span>Modo Demonstração (API offline)</span>
+        }
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+        💈 Barbearia <span class="text-barber-gold">BarberShop</span>
+      </h1>
+      <p class="text-barber-textMuted text-sm sm:text-base">
+        Escolha o serviço, seu profissional de preferência e o melhor horário em poucos segundos.
+      </p>
+    </header>
+
+    @if (agendamentoConcluido()) {
+      <!-- Tela de Confirmação e Sucesso -->
+      <div class="bg-barber-card border border-emerald-600/40 rounded-2xl p-6 sm:p-8 space-y-6 text-center shadow-xl animate-fade-in">
+        <div class="w-16 h-16 bg-emerald-900/40 border border-emerald-500/50 rounded-full flex items-center justify-center mx-auto text-emerald-400 text-3xl">
+          ✓
+        </div>
+
+        <div class="space-y-2">
+          <h2 class="text-2xl font-bold text-white">Agendamento Solicitado!</h2>
+          <p class="text-sm text-barber-textMuted">
+            O barbeiro <span class="text-white font-semibold">{{ barbeiroSelecionado()?.nome }}</span> recebeu seu pedido no WhatsApp cadastrado.
+          </p>
+        </div>
+
+        <div class="bg-barber-dark/80 rounded-xl p-4 text-left space-y-3 border border-barber-border text-sm">
+          <div class="flex justify-between border-b border-barber-border/60 pb-2">
+            <span class="text-barber-textMuted">Serviço:</span>
+            <span class="font-semibold text-white">{{ servicoSelecionado()?.nome }}</span>
+          </div>
+          <div class="flex justify-between border-b border-barber-border/60 pb-2">
+            <span class="text-barber-textMuted">Data & Horário:</span>
+            <span class="font-semibold text-barber-gold">{{ dataSelecionada() }} às {{ horarioSelecionado() }}</span>
+          </div>
+          <div class="flex justify-between border-b border-barber-border/60 pb-2">
+            <span class="text-barber-textMuted">Cliente:</span>
+            <span class="font-semibold text-white">{{ formCliente.get('nome')?.value }}</span>
+          </div>
+          <div class="flex justify-between pt-1">
+            <span class="text-barber-textMuted">Total a pagar:</span>
+            <span class="font-bold text-lg text-emerald-400">R$ {{ valorTotal() | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <div class="p-4 bg-emerald-950/30 border border-emerald-600/30 rounded-xl text-xs text-emerald-300">
+          📱 Você receberá uma notificação no WhatsApp com o link de confirmação e a opção de pagamento via Pix.
+        </div>
+
+        <button (click)="novoAgendamento()"
+                class="w-full py-3 px-4 rounded-xl bg-barber-gold hover:bg-barber-goldHover text-black font-bold transition shadow-lg">
+          Fazer Outro Agendamento
+        </button>
+      </div>
+    } @else {
+      <!-- Formulário de Agendamento por Etapas -->
+      <div class="space-y-6">
+
+        <!-- ETAPA 1: SELEÇÃO DE SERVIÇO -->
+        <section class="bg-barber-card border border-barber-border rounded-2xl p-5 sm:p-6 space-y-4">
+          <div class="flex items-center gap-3">
+            <span class="w-7 h-7 rounded-full bg-barber-gold text-black font-bold flex items-center justify-center text-xs">1</span>
+            <h2 class="text-lg font-bold text-white">Escolha o Serviço</h2>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            @for (servico of servicos(); track servico.id) {
+              <div (click)="selecionarServico(servico)"
+                   class="cursor-pointer p-4 rounded-xl border transition-all relative"
+                   [ngClass]="servicoSelecionado()?.id === servico.id
+                     ? 'bg-barber-gold/10 border-barber-gold shadow-md'
+                     : 'bg-barber-dark/60 border-barber-border hover:border-barber-gold/50'">
+                <div class="flex justify-between items-start">
+                  <h3 class="font-bold text-white text-sm">{{ servico.nome }}</h3>
+                  <span class="text-sm font-extrabold text-barber-gold">R$ {{ servico.preco | number:'1.2-2' }}</span>
+                </div>
+                <p class="text-xs text-barber-textMuted mt-1 line-clamp-2">{{ servico.descricao }}</p>
+                <div class="mt-3 flex items-center gap-1 text-[11px] text-gray-400">
+                  <span>⏱️ {{ servico.duracaoMinutos }} minutos</span>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- ETAPA 2: SELEÇÃO DE BARBEIRO -->
+        <section class="bg-barber-card border border-barber-border rounded-2xl p-5 sm:p-6 space-y-4">
+          <div class="flex items-center gap-3">
+            <span class="w-7 h-7 rounded-full bg-barber-gold text-black font-bold flex items-center justify-center text-xs">2</span>
+            <h2 class="text-lg font-bold text-white">Escolha o Barbeiro</h2>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            @for (barbeiro of barbeiros(); track barbeiro.id) {
+              <div (click)="selecionarBarbeiro(barbeiro)"
+                   class="cursor-pointer p-4 rounded-xl border text-center transition-all flex flex-col items-center gap-2"
+                   [ngClass]="barbeiroSelecionado()?.id === barbeiro.id
+                     ? 'bg-barber-gold/10 border-barber-gold shadow-md'
+                     : 'bg-barber-dark/60 border-barber-border hover:border-barber-gold/50'">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-barber-gold to-yellow-600 flex items-center justify-center text-black font-black text-base shadow">
+                  {{ barbeiro.nome.charAt(0) }}
+                </div>
+                <div>
+                  <h3 class="font-semibold text-white text-xs sm:text-sm">{{ barbeiro.nome }}</h3>
+                  <span class="text-[11px] text-barber-textMuted">Especialista</span>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- ETAPA 3: DATA E HORÁRIOS DISPONÍVEIS -->
+        <section class="bg-barber-card border border-barber-border rounded-2xl p-5 sm:p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-7 h-7 rounded-full bg-barber-gold text-black font-bold flex items-center justify-center text-xs">3</span>
+              <h2 class="text-lg font-bold text-white">Data e Horário</h2>
+            </div>
+            <input type="date"
+                   [value]="dataSelecionada()"
+                   (change)="dataSelecionada.set($any($event.target).value)"
+                   class="bg-barber-dark border border-barber-border rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-barber-gold">
+          </div>
+
+          <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 pt-2">
+            @for (hora of horariosDisponiveis(); track hora) {
+              <button type="button"
+                      (click)="selecionarHorario(hora)"
+                      class="py-2.5 px-3 rounded-lg text-xs font-semibold border transition"
+                      [ngClass]="horarioSelecionado() === hora
+                        ? 'bg-barber-gold text-black border-barber-gold shadow'
+                        : 'bg-barber-dark/70 text-gray-300 border-barber-border hover:border-barber-gold/40'">
+                {{ hora }}
+              </button>
+            }
+          </div>
+        </section>
+
+        <!-- ETAPA 4: DADOS DE IDENTIFICAÇÃO -->
+        <section class="bg-barber-card border border-barber-border rounded-2xl p-5 sm:p-6 space-y-4" [formGroup]="formCliente">
+          <div class="flex items-center gap-3">
+            <span class="w-7 h-7 rounded-full bg-barber-gold text-black font-bold flex items-center justify-center text-xs">4</span>
+            <h2 class="text-lg font-bold text-white">Seus Dados para Contato</h2>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-medium text-barber-textMuted mb-1">Seu Nome Completo</label>
+              <input type="text"
+                     formControlName="nome"
+                     placeholder="Ex: João da Silva"
+                     class="w-full bg-barber-dark border border-barber-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-barber-gold transition">
+              @if (formCliente.get('nome')?.touched && formCliente.get('nome')?.invalid) {
+                <span class="text-xs text-red-400 mt-1 block">Por favor, informe seu nome.</span>
+              }
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-barber-textMuted mb-1">WhatsApp (DDD + Número)</label>
+              <input type="tel"
+                     formControlName="telefone"
+                     placeholder="Ex: 11999998888 (apenas números)"
+                     class="w-full bg-barber-dark border border-barber-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-barber-gold transition">
+              @if (formCliente.get('telefone')?.touched && formCliente.get('telefone')?.invalid) {
+                <span class="text-xs text-red-400 mt-1 block">Informe um número de WhatsApp válido com DDD (10 ou 11 dígitos).</span>
+              }
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-barber-textMuted mb-1">Observação para o Barbeiro (Opcional)</label>
+              <input type="text"
+                     formControlName="observacao"
+                     placeholder="Ex: Corte navalhado com risco lateral"
+                     class="w-full bg-barber-dark border border-barber-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-barber-gold transition">
+            </div>
+          </div>
+        </section>
+
+        <!-- RESUMO FLUTUANTE / BOTÃO FINALIZAR -->
+        <div class="bg-barber-card/90 backdrop-blur border border-barber-border rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-4 shadow-2xl">
+          <div>
+            <span class="text-xs text-barber-textMuted block">Total do Atendimento</span>
+            <span class="text-2xl font-black text-white">R$ {{ valorTotal() | number:'1.2-2' }}</span>
+          </div>
+
+          <button (click)="finalizarAgendamento()"
+                  [disabled]="submetendo()"
+                  class="w-full sm:w-auto px-8 py-3 rounded-xl bg-barber-gold hover:bg-barber-goldHover text-black font-extrabold text-sm transition shadow-lg disabled:opacity-50">
+            @if (submetendo()) {
+              <span>Enviando solicitação...</span>
+            } @else {
+              <span>Confirmar Agendamento ➔</span>
+            }
+          </button>
+        </div>
+
+      </div>
+    }
+
+  </div>
+</div>

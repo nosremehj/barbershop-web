@@ -136,14 +136,7 @@
                      : 'bg-surface-card hover:border-surface-borderHover'">
                 <div class="flex justify-between items-start gap-2">
                   <div>
-                    <div class="flex items-center gap-2">
-                      <h3 class="font-display font-bold text-ink-primary text-sm sm:text-base">{{ servico.nome }}</h3>
-                      @if (servicoSelecionado()?.id === servico.id) {
-                        <span class="text-[10px] bg-brass/20 text-brass border border-brass/50 px-1.5 py-0.5 rounded font-mono">
-                          ✓ Ativo
-                        </span>
-                      }
-                    </div>
+                    <h3 class="font-display font-bold text-ink-primary text-sm sm:text-base">{{ servico.nome }}</h3>
                     <span class="inline-block text-[11px] font-mono text-ink-muted mt-0.5">⏱ {{ servico.duracaoMinutos }} minutos</span>
                   </div>
                   <div class="text-right">
@@ -153,11 +146,6 @@
                   </div>
                 </div>
                 <p class="text-xs text-ink-secondary mt-2.5 leading-relaxed">{{ servico.descricao }}</p>
-                @if (servicoSelecionado()?.id === servico.id) {
-                  <span class="block text-[10px] text-brass/70 mt-2 font-mono">
-                    ✦ Clique novamente para remover este serviço
-                  </span>
-                }
               </div>
             }
           </div>
@@ -201,11 +189,6 @@
                     <span class="text-[10px] text-ink-muted font-mono">5.0</span>
                   </div>
                 </div>
-                @if (barbeiroSelecionado()?.id === barbeiro.id) {
-                  <span class="text-[10px] text-brass/80 font-mono mt-1">
-                    ✓ Selecionado (clique para trocar/remover)
-                  </span>
-                }
               </div>
             }
           </div>

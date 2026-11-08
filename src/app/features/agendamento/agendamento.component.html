@@ -18,7 +18,6 @@
 
       <!-- Status da API & Acesso do Membro -->
       <div class="flex items-center gap-3">
-        <!-- Indicador de Status com acabamento de joia/metal -->
         <div class="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-mono border"
              [ngClass]="apiOnline() ? 'bg-surface-card border-emerald-600/40 text-emerald-300' : 'bg-surface-card border-brass/40 text-brass'">
           <span class="w-1.5 h-1.5 rounded-full" [ngClass]="apiOnline() ? 'bg-emerald-400 animate-pulse' : 'bg-brass animate-ping'"></span>
@@ -28,15 +27,16 @@
         @if (authService.isAuthenticated()) {
           <div class="flex items-center gap-2 bg-surface-card border border-surface-border rounded-xl px-3 py-1.5 text-xs">
             <span class="text-brass">👤 {{ authService.currentUser()?.nome }}</span>
-            <button (click)="authService.logout()" class="text-ink-muted hover:text-ember-300 ml-1 text-[11px]">
+            <button mat-button color="warn" (click)="authService.logout()" class="!min-w-0 !px-2 !py-0 !text-[11px]">
               Sair
             </button>
           </div>
         } @else {
           <a routerLink="/auth"
-             class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-brass/60 hover:border-brass bg-brass/10 hover:bg-brass/20 text-brass hover:text-brass-light text-xs font-semibold tracking-wide uppercase transition shadow-sm">
+             mat-stroked-button
+             class="!border-brass/60 !text-brass hover:!bg-brass/10 !text-xs !font-semibold !tracking-wider !uppercase !rounded-xl">
+            <mat-icon class="!w-4 !h-4 !text-base mr-1">person</mat-icon>
             <span>Membros</span>
-            <span class="text-[10px]">➔</span>
           </a>
         }
       </div>
@@ -45,10 +45,10 @@
 
   <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-10 relative z-10">
 
-    <!-- HERO HEADER EDITORIAL (Fora do padrão genérico) -->
+    <!-- HERO HEADER EDITORIAL -->
     <header class="text-center space-y-3 max-w-xl mx-auto">
       <div class="inline-flex items-center gap-2 badge-stamp px-3 py-1 text-[10px] text-brass rounded font-mono">
-        EST. 2026 • ALTA BARBEARIA
+        EST. 2026 • ALTA BARBEARIA COM ANGULAR MATERIAL
       </div>
       <h1 class="text-3xl sm:text-5xl font-display font-extrabold tracking-tight text-ink-primary leading-tight">
         A Arte da Navalha,<br>
@@ -61,9 +61,9 @@
 
     @if (agendamentoConcluido()) {
       <!-- RECIBO ARTESANAL / CONFIRMAÇÃO DE SUCESSO -->
-      <div class="max-w-lg mx-auto bg-surface-card embossed-border rounded-3xl p-6 sm:p-8 space-y-6 animate-fade-up text-center border-t-4 border-t-brass">
+      <mat-card class="max-w-lg mx-auto !p-6 sm:!p-8 space-y-6 animate-fade-up text-center !border-t-4 !border-t-brass">
         <div class="w-14 h-14 rounded-full bg-brass/10 border border-brass/50 text-brass flex items-center justify-center mx-auto text-2xl font-bold">
-          ✓
+          <mat-icon class="!text-3xl !w-8 !h-8">check</mat-icon>
         </div>
 
         <div class="space-y-1">
@@ -72,7 +72,6 @@
           <p class="text-xs text-ink-muted">Notificação enviada diretamente ao WhatsApp do barbeiro.</p>
         </div>
 
-        <!-- Ticket Estilo Vintage -->
         <div class="bg-surface-void rounded-2xl p-5 border border-surface-border text-left space-y-3 font-mono text-xs">
           <div class="flex justify-between border-b border-surface-border/60 pb-2.5">
             <span class="text-ink-muted">BARBEIRO:</span>
@@ -84,7 +83,7 @@
           </div>
           <div class="flex justify-between border-b border-surface-border/60 pb-2.5">
             <span class="text-ink-muted">DATA & HORA:</span>
-            <span class="text-brass font-bold">{{ dataSelecionada() }} às {{ horarioSelecionado() }}</span>
+            <span class="text-brass font-bold">{{ getDataFormatada() }} às {{ horarioSelecionado() }}</span>
           </div>
           <div class="flex justify-between border-b border-surface-border/60 pb-2.5">
             <span class="text-ink-muted">CLIENTE:</span>
@@ -100,16 +99,18 @@
           📱 <strong>Atenção:</strong> Você receberá o lembrete 1h antes com o link para pagamento via Pix ou direto na cadeira.
         </div>
 
-        <button (click)="novoAgendamento()"
-                class="w-full py-3.5 rounded-xl bg-brass hover:bg-brass-light active:bg-brass-dark text-surface-void font-bold text-xs uppercase tracking-wider transition shadow-lg">
+        <button mat-flat-button
+                color="primary"
+                (click)="novoAgendamento()"
+                class="!w-full !py-6 !rounded-xl !text-xs !uppercase !tracking-wider">
           Agendar Outro Horário
         </button>
-      </div>
+      </mat-card>
     } @else {
-      <!-- FLUXO COMPLETO DE AGENDAMENTO -->
+      <!-- FLUXO COMPLETO DE AGENDAMENTO COM ANGULAR MATERIAL -->
       <div class="space-y-8">
 
-        <!-- PASSO 1: SERVIÇOS -->
+        <!-- PASSO 1: SERVIÇOS (MAT-CARD) -->
         <section class="space-y-4">
           <div class="flex items-center justify-between border-b border-surface-border pb-3">
             <div class="flex items-center gap-3">
@@ -123,11 +124,11 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             @for (servico of servicos(); track servico.id) {
-              <div (click)="selecionarServico(servico)"
-                   class="cursor-pointer p-4 sm:p-5 rounded-2xl transition-all relative embossed-border"
-                   [ngClass]="servicoSelecionado()?.id === servico.id
-                     ? 'bg-surface-raised border-brass shadow-lg scale-[1.01]'
-                     : 'bg-surface-card hover:border-surface-borderHover'">
+              <mat-card (click)="selecionarServico(servico)"
+                        class="cursor-pointer !p-4 sm:!p-5 transition-all !relative"
+                        [ngClass]="servicoSelecionado()?.id === servico.id
+                          ? '!bg-surface-raised !border-brass shadow-lg scale-[1.01]'
+                          : 'hover:!border-surface-borderHover'">
                 <div class="flex justify-between items-start gap-2">
                   <div>
                     <h3 class="font-display font-bold text-ink-primary text-sm sm:text-base">{{ servico.nome }}</h3>
@@ -140,7 +141,7 @@
                   </div>
                 </div>
                 <p class="text-xs text-ink-secondary mt-2.5 leading-relaxed">{{ servico.descricao }}</p>
-              </div>
+              </mat-card>
             }
           </div>
         </section>
@@ -159,12 +160,11 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             @for (barbeiro of barbeiros(); track barbeiro.id) {
-              <div (click)="selecionarBarbeiro(barbeiro)"
-                   class="cursor-pointer p-4 rounded-2xl transition-all text-center flex flex-col items-center gap-2.5 embossed-border"
-                   [ngClass]="barbeiroSelecionado()?.id === barbeiro.id
-                     ? 'bg-surface-raised border-brass shadow-lg scale-[1.01]'
-                     : 'bg-surface-card hover:border-surface-borderHover'">
-                <!-- Avatar com Moldura Nobre -->
+              <mat-card (click)="selecionarBarbeiro(barbeiro)"
+                        class="cursor-pointer !p-4 transition-all text-center flex flex-col items-center gap-2.5"
+                        [ngClass]="barbeiroSelecionado()?.id === barbeiro.id
+                          ? '!bg-surface-raised !border-brass shadow-lg scale-[1.01]'
+                          : 'hover:!border-surface-borderHover'">
                 <div class="w-14 h-14 rounded-full bg-surface-void border-2 p-0.5 flex items-center justify-center text-brass font-display font-black text-lg shadow-inner"
                      [ngClass]="barbeiroSelecionado()?.id === barbeiro.id ? 'border-brass' : 'border-surface-border'">
                   {{ barbeiro.nome.charAt(0) }}
@@ -176,88 +176,92 @@
                     <span class="text-[10px] text-ink-muted font-mono">5.0</span>
                   </div>
                 </div>
-              </div>
+              </mat-card>
             }
           </div>
         </section>
 
-        <!-- PASSO 3: DATA E TURNOS DISPONÍVEIS -->
-        <section class="space-y-4 bg-surface-card embossed-border rounded-3xl p-5 sm:p-7">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-surface-border pb-4">
+        <!-- PASSO 3: DATA (MAT-DATEPICKER) E HORÁRIOS (MAT-CHIPS) -->
+        <mat-card class="!p-5 sm:!p-7 space-y-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-surface-border pb-4">
             <div class="flex items-center gap-3">
               <span class="w-6 h-6 rounded-full bg-brass/15 border border-brass text-brass font-mono font-bold flex items-center justify-center text-xs">
                 III
               </span>
               <div>
                 <h2 class="text-base sm:text-lg font-display font-bold text-ink-primary">Data & Janelas de Horário</h2>
-                <p class="text-[11px] text-ink-muted">Os slots respeitam o tempo do corte selecionado ({{ tempoTotal() }} min)</p>
+                <p class="text-[11px] text-ink-muted">Tempo reservado: {{ tempoTotal() }} min | Data: {{ getDataFormatada() }}</p>
               </div>
             </div>
 
-            <!-- Seletor de Data Estilizado -->
-            <input type="date"
-                   [value]="dataSelecionada()"
-                   (change)="dataSelecionada.set($any($event.target).value)"
-                   class="bg-surface-void border border-surface-border focus:border-brass rounded-xl px-3.5 py-2 text-xs font-mono text-ink-primary focus:outline-none transition">
+            <!-- Angular Material Datepicker Elegante -->
+            <mat-form-field appearance="outline" class="!w-full sm:!w-60 !text-xs !font-mono">
+              <mat-label>Data do Atendimento</mat-label>
+              <input matInput
+                     [matDatepicker]="picker"
+                     [min]="minDate"
+                     [value]="dataSelecionada()"
+                     (dateChange)="onDataChange($event)"
+                     placeholder="Escolha a data">
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
           </div>
 
-          <!-- Grade por Turnos -->
-          <div class="space-y-4 pt-2">
-            <!-- Turno da Manhã -->
+          <!-- Grade por Turnos com MatChips -->
+          <div class="space-y-4 pt-1">
+            <!-- Manhã -->
             <div>
               <span class="text-[11px] font-mono uppercase tracking-widest text-ink-muted block mb-2">Manhã</span>
-              <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
-                @for (h of horariosManha(); track h) {
-                  <button type="button"
-                          (click)="selecionarHorario(h)"
-                          class="py-2.5 px-3 rounded-xl text-xs font-mono font-medium border transition-all"
-                          [ngClass]="horarioSelecionado() === h
-                            ? 'bg-brass text-surface-void font-bold border-brass shadow-md'
-                            : 'bg-surface-void text-ink-secondary border-surface-border hover:border-brass/50'">
-                    {{ h }}
-                  </button>
-                }
-              </div>
+              <mat-chip-listbox aria-label="Horários da Manhã">
+                <div class="grid grid-cols-3 sm:grid-cols-5 gap-2 w-full">
+                  @for (h of horariosManha(); track h) {
+                    <mat-chip-option (click)="selecionarHorario(h)"
+                                     [selected]="horarioSelecionado() === h"
+                                     class="!text-xs !font-mono !justify-center">
+                      {{ h }}
+                    </mat-chip-option>
+                  }
+                </div>
+              </mat-chip-listbox>
             </div>
 
-            <!-- Turno da Tarde -->
+            <!-- Tarde -->
             <div>
               <span class="text-[11px] font-mono uppercase tracking-widest text-ink-muted block mb-2">Tarde</span>
-              <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                @for (h of horariosTarde(); track h) {
-                  <button type="button"
-                          (click)="selecionarHorario(h)"
-                          class="py-2.5 px-3 rounded-xl text-xs font-mono font-medium border transition-all"
-                          [ngClass]="horarioSelecionado() === h
-                            ? 'bg-brass text-surface-void font-bold border-brass shadow-md'
-                            : 'bg-surface-void text-ink-secondary border-surface-border hover:border-brass/50'">
-                    {{ h }}
-                  </button>
-                }
-              </div>
+              <mat-chip-listbox aria-label="Horários da Tarde">
+                <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 w-full">
+                  @for (h of horariosTarde(); track h) {
+                    <mat-chip-option (click)="selecionarHorario(h)"
+                                     [selected]="horarioSelecionado() === h"
+                                     class="!text-xs !font-mono !justify-center">
+                      {{ h }}
+                    </mat-chip-option>
+                  }
+                </div>
+              </mat-chip-listbox>
             </div>
 
-            <!-- Turno da Noite -->
+            <!-- Noite -->
             <div>
               <span class="text-[11px] font-mono uppercase tracking-widest text-ink-muted block mb-2">Noite</span>
-              <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                @for (h of horariosNoite(); track h) {
-                  <button type="button"
-                          (click)="selecionarHorario(h)"
-                          class="py-2.5 px-3 rounded-xl text-xs font-mono font-medium border transition-all"
-                          [ngClass]="horarioSelecionado() === h
-                            ? 'bg-brass text-surface-void font-bold border-brass shadow-md'
-                            : 'bg-surface-void text-ink-secondary border-surface-border hover:border-brass/50'">
-                    {{ h }}
-                  </button>
-                }
-              </div>
+              <mat-chip-listbox aria-label="Horários da Noite">
+                <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 w-full">
+                  @for (h of horariosNoite(); track h) {
+                    <mat-chip-option (click)="selecionarHorario(h)"
+                                     [selected]="horarioSelecionado() === h"
+                                     class="!text-xs !font-mono !justify-center">
+                      {{ h }}
+                    </mat-chip-option>
+                  }
+                </div>
+              </mat-chip-listbox>
             </div>
           </div>
-        </section>
+        </mat-card>
 
-        <!-- PASSO 4: IDENTIFICAÇÃO -->
-        <section class="space-y-4 bg-surface-card embossed-border rounded-3xl p-5 sm:p-7" [formGroup]="formCliente">
+        <!-- PASSO 4: IDENTIFICAÇÃO (MAT-FORM-FIELD + MATINPUT) -->
+        <mat-card class="!p-5 sm:!p-7 space-y-4" [formGroup]="formCliente">
           <div class="flex items-center gap-3 border-b border-surface-border pb-3">
             <span class="w-6 h-6 rounded-full bg-brass/15 border border-brass text-brass font-mono font-bold flex items-center justify-center text-xs">
               IV
@@ -266,33 +270,33 @@
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-mono uppercase tracking-wider text-ink-muted mb-1.5">Seu Nome Completo</label>
-              <input type="text"
-                     formControlName="nome"
-                     placeholder="Ex: Gabriel Toledo"
-                     class="w-full bg-surface-void border border-surface-border focus:border-brass rounded-xl px-4 py-3 text-sm text-ink-primary placeholder:text-ink-faint focus:outline-none transition">
-            </div>
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Nome Completo</mat-label>
+              <input matInput formControlName="nome" placeholder="Ex: Gabriel Toledo">
+              <mat-icon matSuffix class="!text-ink-muted">person</mat-icon>
+              @if (formCliente.get('nome')?.touched && formCliente.get('nome')?.invalid) {
+                <mat-error>Por favor, informe seu nome completo.</mat-error>
+              }
+            </mat-form-field>
 
-            <div>
-              <label class="block text-xs font-mono uppercase tracking-wider text-ink-muted mb-1.5">WhatsApp para Confirmação</label>
-              <input type="tel"
-                     formControlName="telefone"
-                     placeholder="11999998888 (com DDD)"
-                     class="w-full bg-surface-void border border-surface-border focus:border-brass rounded-xl px-4 py-3 text-sm text-ink-primary placeholder:text-ink-faint focus:outline-none transition">
-            </div>
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>WhatsApp (com DDD)</mat-label>
+              <input matInput formControlName="telefone" placeholder="11999998888">
+              <mat-icon matSuffix class="!text-ink-muted">phone</mat-icon>
+              @if (formCliente.get('telefone')?.touched && formCliente.get('telefone')?.invalid) {
+                <mat-error>Informe um WhatsApp válido (10 ou 11 dígitos).</mat-error>
+              }
+            </mat-form-field>
           </div>
 
-          <div>
-            <label class="block text-xs font-mono uppercase tracking-wider text-ink-muted mb-1.5">Preferências ou Observação (Opcional)</label>
-            <input type="text"
-                   formControlName="observacao"
-                   placeholder="Ex: Quero navalhado bem baixo nas laterais e aparar bigode"
-                   class="w-full bg-surface-void border border-surface-border focus:border-brass rounded-xl px-4 py-3 text-sm text-ink-primary placeholder:text-ink-faint focus:outline-none transition">
-          </div>
-        </section>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Preferências ou Observação (Opcional)</mat-label>
+            <input matInput formControlName="observacao" placeholder="Ex: Corte navalhado com risco lateral">
+            <mat-icon matSuffix class="!text-ink-muted">notes</mat-icon>
+          </mat-form-field>
+        </mat-card>
 
-        <!-- BARRA FLUTUANTE DE FINALIZAÇÃO (Estilo alfaiataria) -->
+        <!-- BARRA FLUTUANTE DE FINALIZAÇÃO COM MAT-BUTTON -->
         <div class="bg-surface-void/95 backdrop-blur-lg border border-brass/40 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-4 shadow-2xl z-40">
           <div class="flex items-center gap-4">
             <div>
@@ -305,14 +309,16 @@
 
             @if (horarioSelecionado()) {
               <div class="hidden sm:block border-l border-surface-border pl-4 text-xs font-mono text-ink-secondary">
-                <span>🗓 {{ dataSelecionada() }} às <strong class="text-ink-primary">{{ horarioSelecionado() }}</strong></span>
+                <span>🗓 {{ getDataFormatada() }} às <strong class="text-ink-primary">{{ horarioSelecionado() }}</strong></span>
               </div>
             }
           </div>
 
-          <button (click)="finalizarAgendamento()"
+          <button mat-flat-button
+                  color="primary"
+                  (click)="finalizarAgendamento()"
                   [disabled]="submetendo()"
-                  class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-brass hover:bg-brass-light active:bg-brass-dark text-surface-void font-bold text-xs uppercase tracking-widest transition shadow-lg disabled:opacity-50">
+                  class="!w-full sm:!w-auto !py-6 !px-8 !rounded-xl !text-xs !uppercase !tracking-widest">
             @if (submetendo()) {
               <span>Gravando Reserva...</span>
             } @else {

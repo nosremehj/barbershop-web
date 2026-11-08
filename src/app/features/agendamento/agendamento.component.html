@@ -54,7 +54,7 @@
         <span class="italic font-normal text-brass">o rigor do tempo.</span>
       </h1>
       <p class="text-xs sm:text-sm text-ink-secondary leading-relaxed">
-        Selecione ou desmarque seus serviços, escolha seu barbeiro de confiança e defina seu horário em poucos toques.
+        Selecione os serviços desejados, escolha seu barbeiro de confiança e defina seu horário em poucos toques.
       </p>
     </header>
 
@@ -115,16 +115,9 @@
               <span class="w-6 h-6 rounded-full bg-brass/15 border border-brass text-brass font-mono font-bold flex items-center justify-center text-xs">
                 I
               </span>
-              <h2 class="text-base sm:text-lg font-display font-bold text-ink-primary">Selecione o Ritual</h2>
+              <h2 class="text-base sm:text-lg font-display font-bold text-ink-primary">Selecione o Serviço</h2>
             </div>
-            @if (temServico()) {
-              <button (click)="servicoSelecionado.set(null)"
-                      class="text-[11px] font-mono text-ember-300 hover:text-ember-200 underline">
-                ✕ Desmarcar ritual
-              </button>
-            } @else {
-              <span class="text-xs text-ink-muted font-mono">Clique para escolher</span>
-            }
+            <span class="text-xs text-ink-muted font-mono">Duração & Valores</span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -160,14 +153,7 @@
               </span>
               <h2 class="text-base sm:text-lg font-display font-bold text-ink-primary">Escolha o Profissional</h2>
             </div>
-            @if (temBarbeiro()) {
-              <button (click)="barbeiroSelecionado.set(null)"
-                      class="text-[11px] font-mono text-ember-300 hover:text-ember-200 underline">
-                ✕ Desmarcar profissional
-              </button>
-            } @else {
-              <span class="text-xs text-ink-muted font-mono">Clique para escolher</span>
-            }
+            <span class="text-xs text-ink-muted font-mono">Especialistas</span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
@@ -205,21 +191,15 @@
                 <h2 class="text-base sm:text-lg font-display font-bold text-ink-primary">Data & Janelas de Horário</h2>
                 <p class="text-[11px] text-ink-muted">
                   @if (temServico()) {
-                    <span>Duração prevista do ritual: {{ tempoTotal() }} min</span>
+                    <span>Duração prevista do atendimento: {{ tempoTotal() }} min</span>
                   } @else {
-                    <span>Selecione um ritual para calcular o tempo</span>
+                    <span>Selecione um serviço para calcular a duração</span>
                   }
                 </p>
               </div>
             </div>
 
             <div class="flex items-center gap-3">
-              @if (temHorario()) {
-                <button (click)="horarioSelecionado.set(null)"
-                        class="text-[11px] font-mono text-ember-300 hover:text-ember-200 underline">
-                  ✕ Desmarcar horário ({{ horarioSelecionado() }})
-                </button>
-              }
               <!-- Seletor de Data Estilizado -->
               <input type="date"
                      [value]="dataSelecionada()"
@@ -329,7 +309,7 @@
                   <span class="text-2xl font-display font-black text-brass">R$ {{ valorTotal() | number:'1.2-2' }}</span>
                   <span class="text-xs text-ink-muted">({{ tempoTotal() }} min)</span>
                 } @else {
-                  <span class="text-base font-display font-medium text-ink-muted">Nenhum ritual selecionado</span>
+                  <span class="text-base font-display font-medium text-ink-muted">Nenhum serviço selecionado</span>
                 }
               </div>
             </div>
@@ -351,7 +331,7 @@
             @if (submetendo()) {
               <span>Gravando Reserva...</span>
             } @else if (!temServico()) {
-              <span>1. Escolha um Ritual ➔</span>
+              <span>1. Escolha um Serviço ➔</span>
             } @else if (!temBarbeiro()) {
               <span>2. Escolha um Barbeiro ➔</span>
             } @else if (!temHorario()) {

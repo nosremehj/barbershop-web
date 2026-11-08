@@ -1,204 +1,320 @@
-<div class="min-h-screen bg-barber-dark text-gray-100 py-8 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-2xl mx-auto space-y-8">
+<div class="min-h-screen bg-surface-deep text-ink-primary relative">
+  <!-- Textura sutil orgânica de fundo -->
+  <div class="absolute inset-0 bg-grain pointer-events-none opacity-30"></div>
 
-    <!-- Header Principal & Status da API -->
-    <header class="text-center space-y-3">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border"
-           [ngClass]="apiOnline() ? 'bg-emerald-950/60 border-emerald-600/50 text-emerald-400' : 'bg-amber-950/60 border-amber-600/50 text-amber-400'">
-        <span class="w-2 h-2 rounded-full" [ngClass]="apiOnline() ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'"></span>
-        @if (apiOnline()) {
-          <span>API Spring Boot Conectada (v{{ apiStatus()?.versao }})</span>
-        } @else {
-          <span>Modo Demonstração (API offline)</span>
-        }
+  <!-- NAVEGAÇÃO SUPERIOR ARTESANAL -->
+  <nav class="border-b border-surface-border bg-surface-void/90 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <!-- Marca -->
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-surface-raised border border-brass/40 flex items-center justify-center text-brass font-display font-black text-lg shadow-inner">
+          💈
+        </div>
+        <div>
+          <span class="block text-xs uppercase tracking-[0.2em] font-semibold text-brass">The Heritage</span>
+          <span class="block text-sm font-display font-bold text-ink-primary -mt-1">Barber & Co.</span>
+        </div>
       </div>
 
-      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-        💈 Barbearia <span class="text-barber-gold">BarberShop</span>
+      <!-- Status da API & Acesso do Membro -->
+      <div class="flex items-center gap-3">
+        <!-- Indicador de Status com acabamento de joia/metal -->
+        <div class="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-mono border"
+             [ngClass]="apiOnline() ? 'bg-surface-card border-emerald-600/40 text-emerald-300' : 'bg-surface-card border-brass/40 text-brass'">
+          <span class="w-1.5 h-1.5 rounded-full" [ngClass]="apiOnline() ? 'bg-emerald-400 animate-pulse' : 'bg-brass animate-ping'"></span>
+          <span>{{ apiOnline() ? 'API Spring Boot v' + apiStatus()?.versao : 'Modo Standalone' }}</span>
+        </div>
+
+        @if (authService.isAuthenticated()) {
+          <div class="flex items-center gap-2 bg-surface-card border border-surface-border rounded-xl px-3 py-1.5 text-xs">
+            <span class="text-brass">👤 {{ authService.currentUser()?.nome }}</span>
+            <button (click)="authService.logout()" class="text-ink-muted hover:text-ember-300 ml-1 text-[11px]">
+              Sair
+            </button>
+          </div>
+        } @else {
+          <a routerLink="/auth"
+             class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-brass/60 hover:border-brass bg-brass/10 hover:bg-brass/20 text-brass hover:text-brass-light text-xs font-semibold tracking-wide uppercase transition shadow-sm">
+            <span>Membros</span>
+            <span class="text-[10px]">➔</span>
+          </a>
+        }
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-10 relative z-10">
+
+    <!-- HERO HEADER EDITORIAL (Fora do padrão genérico) -->
+    <header class="text-center space-y-3 max-w-xl mx-auto">
+      <div class="inline-flex items-center gap-2 badge-stamp px-3 py-1 text-[10px] text-brass rounded font-mono">
+        EST. 2026 • ALTA BARBEARIA
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-display font-extrabold tracking-tight text-ink-primary leading-tight">
+        A Arte da Navalha,<br>
+        <span class="italic font-normal text-brass">o rigor do tempo.</span>
       </h1>
-      <p class="text-barber-textMuted text-sm sm:text-base">
-        Escolha o serviço, seu profissional de preferência e o melhor horário em poucos segundos.
+      <p class="text-xs sm:text-sm text-ink-secondary leading-relaxed">
+        Reserve seu ritual de cuidados sem filas. Cortes clássicos, barboterapia tradicional com toalha quente e atendimento sob medida.
       </p>
     </header>
 
     @if (agendamentoConcluido()) {
-      <!-- Tela de Confirmação e Sucesso -->
-      <div class="bg-barber-card border border-emerald-600/40 rounded-2xl p-6 sm:p-8 space-y-6 text-center shadow-xl animate-fade-in">
-        <div class="w-16 h-16 bg-emerald-900/40 border border-emerald-500/50 rounded-full flex items-center justify-center mx-auto text-emerald-400 text-3xl">
+      <!-- RECIBO ARTESANAL / CONFIRMAÇÃO DE SUCESSO -->
+      <div class="max-w-lg mx-auto bg-surface-card embossed-border rounded-3xl p-6 sm:p-8 space-y-6 animate-fade-up text-center border-t-4 border-t-brass">
+        <div class="w-14 h-14 rounded-full bg-brass/10 border border-brass/50 text-brass flex items-center justify-center mx-auto text-2xl font-bold">
           ✓
         </div>
 
-        <div class="space-y-2">
-          <h2 class="text-2xl font-bold text-white">Agendamento Solicitado!</h2>
-          <p class="text-sm text-barber-textMuted">
-            O barbeiro <span class="text-white font-semibold">{{ barbeiroSelecionado()?.nome }}</span> recebeu seu pedido no WhatsApp cadastrado.
-          </p>
+        <div class="space-y-1">
+          <span class="text-[10px] uppercase font-mono tracking-widest text-brass">Reserva Confirmada</span>
+          <h2 class="text-2xl font-display font-bold text-ink-primary">Seu Horário Está Reservado</h2>
+          <p class="text-xs text-ink-muted">Notificação enviada diretamente ao WhatsApp do barbeiro.</p>
         </div>
 
-        <div class="bg-barber-dark/80 rounded-xl p-4 text-left space-y-3 border border-barber-border text-sm">
-          <div class="flex justify-between border-b border-barber-border/60 pb-2">
-            <span class="text-barber-textMuted">Serviço:</span>
-            <span class="font-semibold text-white">{{ servicoSelecionado()?.nome }}</span>
+        <!-- Ticket Estilo Vintage -->
+        <div class="bg-surface-void rounded-2xl p-5 border border-surface-border text-left space-y-3 font-mono text-xs">
+          <div class="flex justify-between border-b border-surface-border/60 pb-2.5">
+            <span class="text-ink-muted">BARBEIRO:</span>
+            <span class="text-ink-primary font-bold">{{ barbeiroSelecionado()?.nome }}</span>
           </div>
-          <div class="flex justify-between border-b border-barber-border/60 pb-2">
-            <span class="text-barber-textMuted">Data & Horário:</span>
-            <span class="font-semibold text-barber-gold">{{ dataSelecionada() }} às {{ horarioSelecionado() }}</span>
+          <div class="flex justify-between border-b border-surface-border/60 pb-2.5">
+            <span class="text-ink-muted">SERVIÇO:</span>
+            <span class="text-ink-primary font-bold">{{ servicoSelecionado()?.nome }}</span>
           </div>
-          <div class="flex justify-between border-b border-barber-border/60 pb-2">
-            <span class="text-barber-textMuted">Cliente:</span>
-            <span class="font-semibold text-white">{{ formCliente.get('nome')?.value }}</span>
+          <div class="flex justify-between border-b border-surface-border/60 pb-2.5">
+            <span class="text-ink-muted">DATA & HORA:</span>
+            <span class="text-brass font-bold">{{ dataSelecionada() }} às {{ horarioSelecionado() }}</span>
           </div>
-          <div class="flex justify-between pt-1">
-            <span class="text-barber-textMuted">Total a pagar:</span>
-            <span class="font-bold text-lg text-emerald-400">R$ {{ valorTotal() | number:'1.2-2' }}</span>
+          <div class="flex justify-between border-b border-surface-border/60 pb-2.5">
+            <span class="text-ink-muted">CLIENTE:</span>
+            <span class="text-ink-primary font-bold">{{ formCliente.get('nome')?.value }}</span>
+          </div>
+          <div class="flex justify-between pt-1 text-sm font-sans">
+            <span class="text-ink-secondary">Investimento:</span>
+            <span class="text-brass font-extrabold text-base">R$ {{ valorTotal() | number:'1.2-2' }}</span>
           </div>
         </div>
 
-        <div class="p-4 bg-emerald-950/30 border border-emerald-600/30 rounded-xl text-xs text-emerald-300">
-          📱 Você receberá uma notificação no WhatsApp com o link de confirmação e a opção de pagamento via Pix.
+        <div class="p-3.5 bg-surface-raised rounded-xl text-[11px] text-ink-secondary border border-surface-border">
+          📱 <strong>Atenção:</strong> Você receberá o lembrete 1h antes com o link para pagamento via Pix ou direto na cadeira.
         </div>
 
         <button (click)="novoAgendamento()"
-                class="w-full py-3 px-4 rounded-xl bg-barber-gold hover:bg-barber-goldHover text-black font-bold transition shadow-lg">
-          Fazer Outro Agendamento
+                class="w-full py-3.5 rounded-xl bg-brass hover:bg-brass-light active:bg-brass-dark text-surface-void font-bold text-xs uppercase tracking-wider transition shadow-lg">
+          Agendar Outro Horário
         </button>
       </div>
     } @else {
-      <!-- Formulário de Agendamento por Etapas -->
-      <div class="space-y-6">
+      <!-- FLUXO COMPLETO DE AGENDAMENTO -->
+      <div class="space-y-8">
 
-        <!-- ETAPA 1: SELEÇÃO DE SERVIÇO -->
-        <section class="bg-barber-card border border-barber-border rounded-2xl p-5 sm:p-6 space-y-4">
-          <div class="flex items-center gap-3">
-            <span class="w-7 h-7 rounded-full bg-barber-gold text-black font-bold flex items-center justify-center text-xs">1</span>
-            <h2 class="text-lg font-bold text-white">Escolha o Serviço</h2>
+        <!-- PASSO 1: SERVIÇOS -->
+        <section class="space-y-4">
+          <div class="flex items-center justify-between border-b border-surface-border pb-3">
+            <div class="flex items-center gap-3">
+              <span class="w-6 h-6 rounded-full bg-brass/15 border border-brass text-brass font-mono font-bold flex items-center justify-center text-xs">
+                I
+              </span>
+              <h2 class="text-base sm:text-lg font-display font-bold text-ink-primary">Selecione o Ritual</h2>
+            </div>
+            <span class="text-xs text-ink-muted font-mono">Duração & Valores</span>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             @for (servico of servicos(); track servico.id) {
               <div (click)="selecionarServico(servico)"
-                   class="cursor-pointer p-4 rounded-xl border transition-all relative"
+                   class="cursor-pointer p-4 sm:p-5 rounded-2xl transition-all relative embossed-border"
                    [ngClass]="servicoSelecionado()?.id === servico.id
-                     ? 'bg-barber-gold/10 border-barber-gold shadow-md'
-                     : 'bg-barber-dark/60 border-barber-border hover:border-barber-gold/50'">
-                <div class="flex justify-between items-start">
-                  <h3 class="font-bold text-white text-sm">{{ servico.nome }}</h3>
-                  <span class="text-sm font-extrabold text-barber-gold">R$ {{ servico.preco | number:'1.2-2' }}</span>
+                     ? 'bg-surface-raised border-brass shadow-lg scale-[1.01]'
+                     : 'bg-surface-card hover:border-surface-borderHover'">
+                <div class="flex justify-between items-start gap-2">
+                  <div>
+                    <h3 class="font-display font-bold text-ink-primary text-sm sm:text-base">{{ servico.nome }}</h3>
+                    <span class="inline-block text-[11px] font-mono text-ink-muted mt-0.5">⏱ {{ servico.duracaoMinutos }} minutos</span>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-base sm:text-lg font-display font-black text-brass">
+                      R$ {{ servico.preco | number:'1.2-2' }}
+                    </span>
+                  </div>
                 </div>
-                <p class="text-xs text-barber-textMuted mt-1 line-clamp-2">{{ servico.descricao }}</p>
-                <div class="mt-3 flex items-center gap-1 text-[11px] text-gray-400">
-                  <span>⏱️ {{ servico.duracaoMinutos }} minutos</span>
-                </div>
+                <p class="text-xs text-ink-secondary mt-2.5 leading-relaxed">{{ servico.descricao }}</p>
               </div>
             }
           </div>
         </section>
 
-        <!-- ETAPA 2: SELEÇÃO DE BARBEIRO -->
-        <section class="bg-barber-card border border-barber-border rounded-2xl p-5 sm:p-6 space-y-4">
-          <div class="flex items-center gap-3">
-            <span class="w-7 h-7 rounded-full bg-barber-gold text-black font-bold flex items-center justify-center text-xs">2</span>
-            <h2 class="text-lg font-bold text-white">Escolha o Barbeiro</h2>
+        <!-- PASSO 2: MESTRE BARBEIRO -->
+        <section class="space-y-4">
+          <div class="flex items-center justify-between border-b border-surface-border pb-3">
+            <div class="flex items-center gap-3">
+              <span class="w-6 h-6 rounded-full bg-brass/15 border border-brass text-brass font-mono font-bold flex items-center justify-center text-xs">
+                II
+              </span>
+              <h2 class="text-base sm:text-lg font-display font-bold text-ink-primary">Escolha o Profissional</h2>
+            </div>
+            <span class="text-xs text-ink-muted font-mono">Especialistas</span>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             @for (barbeiro of barbeiros(); track barbeiro.id) {
               <div (click)="selecionarBarbeiro(barbeiro)"
-                   class="cursor-pointer p-4 rounded-xl border text-center transition-all flex flex-col items-center gap-2"
+                   class="cursor-pointer p-4 rounded-2xl transition-all text-center flex flex-col items-center gap-2.5 embossed-border"
                    [ngClass]="barbeiroSelecionado()?.id === barbeiro.id
-                     ? 'bg-barber-gold/10 border-barber-gold shadow-md'
-                     : 'bg-barber-dark/60 border-barber-border hover:border-barber-gold/50'">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-barber-gold to-yellow-600 flex items-center justify-center text-black font-black text-base shadow">
+                     ? 'bg-surface-raised border-brass shadow-lg scale-[1.01]'
+                     : 'bg-surface-card hover:border-surface-borderHover'">
+                <!-- Avatar com Moldura Nobre -->
+                <div class="w-14 h-14 rounded-full bg-surface-void border-2 p-0.5 flex items-center justify-center text-brass font-display font-black text-lg shadow-inner"
+                     [ngClass]="barbeiroSelecionado()?.id === barbeiro.id ? 'border-brass' : 'border-surface-border'">
                   {{ barbeiro.nome.charAt(0) }}
                 </div>
                 <div>
-                  <h3 class="font-semibold text-white text-xs sm:text-sm">{{ barbeiro.nome }}</h3>
-                  <span class="text-[11px] text-barber-textMuted">Especialista</span>
+                  <h3 class="font-display font-bold text-ink-primary text-sm">{{ barbeiro.nome }}</h3>
+                  <div class="flex items-center justify-center gap-1 mt-0.5">
+                    <span class="text-brass text-xs">★★★★★</span>
+                    <span class="text-[10px] text-ink-muted font-mono">5.0</span>
+                  </div>
                 </div>
               </div>
             }
           </div>
         </section>
 
-        <!-- ETAPA 3: DATA E HORÁRIOS DISPONÍVEIS -->
-        <section class="bg-barber-card border border-barber-border rounded-2xl p-5 sm:p-6 space-y-4">
-          <div class="flex items-center justify-between">
+        <!-- PASSO 3: DATA E TURNOS DISPONÍVEIS -->
+        <section class="space-y-4 bg-surface-card embossed-border rounded-3xl p-5 sm:p-7">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-surface-border pb-4">
             <div class="flex items-center gap-3">
-              <span class="w-7 h-7 rounded-full bg-barber-gold text-black font-bold flex items-center justify-center text-xs">3</span>
-              <h2 class="text-lg font-bold text-white">Data e Horário</h2>
+              <span class="w-6 h-6 rounded-full bg-brass/15 border border-brass text-brass font-mono font-bold flex items-center justify-center text-xs">
+                III
+              </span>
+              <div>
+                <h2 class="text-base sm:text-lg font-display font-bold text-ink-primary">Data & Janelas de Horário</h2>
+                <p class="text-[11px] text-ink-muted">Os slots respeitam o tempo do corte selecionado ({{ tempoTotal() }} min)</p>
+              </div>
             </div>
+
+            <!-- Seletor de Data Estilizado -->
             <input type="date"
                    [value]="dataSelecionada()"
                    (change)="dataSelecionada.set($any($event.target).value)"
-                   class="bg-barber-dark border border-barber-border rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-barber-gold">
+                   class="bg-surface-void border border-surface-border focus:border-brass rounded-xl px-3.5 py-2 text-xs font-mono text-ink-primary focus:outline-none transition">
           </div>
 
-          <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 pt-2">
-            @for (hora of horariosDisponiveis(); track hora) {
-              <button type="button"
-                      (click)="selecionarHorario(hora)"
-                      class="py-2.5 px-3 rounded-lg text-xs font-semibold border transition"
-                      [ngClass]="horarioSelecionado() === hora
-                        ? 'bg-barber-gold text-black border-barber-gold shadow'
-                        : 'bg-barber-dark/70 text-gray-300 border-barber-border hover:border-barber-gold/40'">
-                {{ hora }}
-              </button>
-            }
+          <!-- Grade por Turnos -->
+          <div class="space-y-4 pt-2">
+            <!-- Turno da Manhã -->
+            <div>
+              <span class="text-[11px] font-mono uppercase tracking-widest text-ink-muted block mb-2">Manhã</span>
+              <div class="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                @for (h of horariosManha(); track h) {
+                  <button type="button"
+                          (click)="selecionarHorario(h)"
+                          class="py-2.5 px-3 rounded-xl text-xs font-mono font-medium border transition-all"
+                          [ngClass]="horarioSelecionado() === h
+                            ? 'bg-brass text-surface-void font-bold border-brass shadow-md'
+                            : 'bg-surface-void text-ink-secondary border-surface-border hover:border-brass/50'">
+                    {{ h }}
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- Turno da Tarde -->
+            <div>
+              <span class="text-[11px] font-mono uppercase tracking-widest text-ink-muted block mb-2">Tarde</span>
+              <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                @for (h of horariosTarde(); track h) {
+                  <button type="button"
+                          (click)="selecionarHorario(h)"
+                          class="py-2.5 px-3 rounded-xl text-xs font-mono font-medium border transition-all"
+                          [ngClass]="horarioSelecionado() === h
+                            ? 'bg-brass text-surface-void font-bold border-brass shadow-md'
+                            : 'bg-surface-void text-ink-secondary border-surface-border hover:border-brass/50'">
+                    {{ h }}
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- Turno da Noite -->
+            <div>
+              <span class="text-[11px] font-mono uppercase tracking-widest text-ink-muted block mb-2">Noite</span>
+              <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                @for (h of horariosNoite(); track h) {
+                  <button type="button"
+                          (click)="selecionarHorario(h)"
+                          class="py-2.5 px-3 rounded-xl text-xs font-mono font-medium border transition-all"
+                          [ngClass]="horarioSelecionado() === h
+                            ? 'bg-brass text-surface-void font-bold border-brass shadow-md'
+                            : 'bg-surface-void text-ink-secondary border-surface-border hover:border-brass/50'">
+                    {{ h }}
+                  </button>
+                }
+              </div>
+            </div>
           </div>
         </section>
 
-        <!-- ETAPA 4: DADOS DE IDENTIFICAÇÃO -->
-        <section class="bg-barber-card border border-barber-border rounded-2xl p-5 sm:p-6 space-y-4" [formGroup]="formCliente">
-          <div class="flex items-center gap-3">
-            <span class="w-7 h-7 rounded-full bg-barber-gold text-black font-bold flex items-center justify-center text-xs">4</span>
-            <h2 class="text-lg font-bold text-white">Seus Dados para Contato</h2>
+        <!-- PASSO 4: IDENTIFICAÇÃO -->
+        <section class="space-y-4 bg-surface-card embossed-border rounded-3xl p-5 sm:p-7" [formGroup]="formCliente">
+          <div class="flex items-center gap-3 border-b border-surface-border pb-3">
+            <span class="w-6 h-6 rounded-full bg-brass/15 border border-brass text-brass font-mono font-bold flex items-center justify-center text-xs">
+              IV
+            </span>
+            <h2 class="text-base sm:text-lg font-display font-bold text-ink-primary">Seus Dados de Confirmação</h2>
           </div>
 
-          <div class="space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-medium text-barber-textMuted mb-1">Seu Nome Completo</label>
+              <label class="block text-xs font-mono uppercase tracking-wider text-ink-muted mb-1.5">Seu Nome Completo</label>
               <input type="text"
                      formControlName="nome"
-                     placeholder="Ex: João da Silva"
-                     class="w-full bg-barber-dark border border-barber-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-barber-gold transition">
-              @if (formCliente.get('nome')?.touched && formCliente.get('nome')?.invalid) {
-                <span class="text-xs text-red-400 mt-1 block">Por favor, informe seu nome.</span>
-              }
+                     placeholder="Ex: Gabriel Toledo"
+                     class="w-full bg-surface-void border border-surface-border focus:border-brass rounded-xl px-4 py-3 text-sm text-ink-primary placeholder:text-ink-faint focus:outline-none transition">
             </div>
 
             <div>
-              <label class="block text-xs font-medium text-barber-textMuted mb-1">WhatsApp (DDD + Número)</label>
+              <label class="block text-xs font-mono uppercase tracking-wider text-ink-muted mb-1.5">WhatsApp para Confirmação</label>
               <input type="tel"
                      formControlName="telefone"
-                     placeholder="Ex: 11999998888 (apenas números)"
-                     class="w-full bg-barber-dark border border-barber-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-barber-gold transition">
-              @if (formCliente.get('telefone')?.touched && formCliente.get('telefone')?.invalid) {
-                <span class="text-xs text-red-400 mt-1 block">Informe um número de WhatsApp válido com DDD (10 ou 11 dígitos).</span>
-              }
+                     placeholder="11999998888 (com DDD)"
+                     class="w-full bg-surface-void border border-surface-border focus:border-brass rounded-xl px-4 py-3 text-sm text-ink-primary placeholder:text-ink-faint focus:outline-none transition">
             </div>
+          </div>
 
-            <div>
-              <label class="block text-xs font-medium text-barber-textMuted mb-1">Observação para o Barbeiro (Opcional)</label>
-              <input type="text"
-                     formControlName="observacao"
-                     placeholder="Ex: Corte navalhado com risco lateral"
-                     class="w-full bg-barber-dark border border-barber-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-barber-gold transition">
-            </div>
+          <div>
+            <label class="block text-xs font-mono uppercase tracking-wider text-ink-muted mb-1.5">Preferências ou Observação (Opcional)</label>
+            <input type="text"
+                   formControlName="observacao"
+                   placeholder="Ex: Quero navalhado bem baixo nas laterais e aparar bigode"
+                   class="w-full bg-surface-void border border-surface-border focus:border-brass rounded-xl px-4 py-3 text-sm text-ink-primary placeholder:text-ink-faint focus:outline-none transition">
           </div>
         </section>
 
-        <!-- RESUMO FLUTUANTE / BOTÃO FINALIZAR -->
-        <div class="bg-barber-card/90 backdrop-blur border border-barber-border rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-4 shadow-2xl">
-          <div>
-            <span class="text-xs text-barber-textMuted block">Total do Atendimento</span>
-            <span class="text-2xl font-black text-white">R$ {{ valorTotal() | number:'1.2-2' }}</span>
+        <!-- BARRA FLUTUANTE DE FINALIZAÇÃO (Estilo alfaiataria) -->
+        <div class="bg-surface-void/95 backdrop-blur-lg border border-brass/40 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-4 shadow-2xl z-40">
+          <div class="flex items-center gap-4">
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-widest text-ink-muted block">Resumo do Pedido</span>
+              <div class="flex items-baseline gap-2">
+                <span class="text-2xl font-display font-black text-brass">R$ {{ valorTotal() | number:'1.2-2' }}</span>
+                <span class="text-xs text-ink-muted">({{ tempoTotal() }} min)</span>
+              </div>
+            </div>
+
+            @if (horarioSelecionado()) {
+              <div class="hidden sm:block border-l border-surface-border pl-4 text-xs font-mono text-ink-secondary">
+                <span>🗓 {{ dataSelecionada() }} às <strong class="text-ink-primary">{{ horarioSelecionado() }}</strong></span>
+              </div>
+            }
           </div>
 
           <button (click)="finalizarAgendamento()"
                   [disabled]="submetendo()"
-                  class="w-full sm:w-auto px-8 py-3 rounded-xl bg-barber-gold hover:bg-barber-goldHover text-black font-extrabold text-sm transition shadow-lg disabled:opacity-50">
+                  class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-brass hover:bg-brass-light active:bg-brass-dark text-surface-void font-bold text-xs uppercase tracking-widest transition shadow-lg disabled:opacity-50">
             @if (submetendo()) {
-              <span>Enviando solicitação...</span>
+              <span>Gravando Reserva...</span>
             } @else {
               <span>Confirmar Agendamento ➔</span>
             }
@@ -208,5 +324,5 @@
       </div>
     }
 
-  </div>
+  </main>
 </div>

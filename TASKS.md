@@ -9,8 +9,8 @@ Este documento centraliza todos os **Requisitos Funcionais (RF)**, **Requisitos 
 
 | ID | Descrição | Status | Detalhes Técnicos |
 | :--- | :--- | :---: | :--- |
-| **RF-01** | Cadastro de Usuários (Cliente, Barbeiro, Admin) | 🟡 Em Progresso | Entidade criada; DTOs criados; falta Service/Controller |
-| **RF-02** | Autenticação Stateless via JWT (Login / Logout) | 🟡 Em Progresso | DTOs e Security base prontos; falta JwtService e endpoint `/login` |
+| **RF-01** | Cadastro de Usuários (Cliente, Barbeiro, Admin) | ✅ Concluído | Entidade, DTOs, AuthService e endpoint `/api/auth/register` implementados |
+| **RF-02** | Autenticação Stateless via JWT (Login / Logout) | ✅ Concluído | `JwtService`, `JwtAuthenticationFilter`, `AuthService` e `/api/auth/login` |
 | **RF-03** | Gestão de Serviços (CRUD, preços e tempo em minutos) | 🟡 Em Progresso | Entidade e Repository criados; falta Service e Controller |
 | **RF-04** | Grade de Disponibilidade do Barbeiro (dias, horas, almoço) | 🟡 Em Progresso | Entidade criada; falta Service e Controller |
 | **RF-05** | Cálculo Dinâmico de Horários Livres (Slots de Agenda) | ⏳ Pendente | Algoritmo que cruza grade, agendamentos e tempo do serviço |
@@ -36,7 +36,7 @@ Este documento centraliza todos os **Requisitos Funcionais (RF)**, **Requisitos 
 | **RNF-06** | Documentação Viva da API | ✅ Concluído | OpenAPI 3 / Swagger UI (`/swagger-ui.html`) |
 | **RNF-07** | Frontend Reativo com Angular Moderno | ✅ Concluído | Standalone Components + Angular Signals (`signal`, `computed`) |
 | **RNF-08** | Design Mobile-First Responsivo | ✅ Concluído | Tailwind CSS customizado com tema *Dark & Gold* |
-| **RNF-09** | Segurança Stateless e Criptografia | 🟡 Em Progresso | BCrypt configurado; falta JwtAuthenticationFilter |
+| **RNF-09** | Segurança Stateless e Criptografia | ✅ Concluído | Spring Security 6 + JJWT + BCrypt + JwtAuthenticationFilter |
 | **RNF-10** | Testes Automatizados (Unitários e Integração) | 🟡 Em Progresso | `SpringBootTest` e `MockMvc` configurados e validados |
 | **RNF-11** | Orquestração Local para Desenvolvimento | ✅ Concluído | `docker-compose.yml` (PostgreSQL 16 + PgAdmin) |
 
@@ -57,10 +57,10 @@ Este documento centraliza todos os **Requisitos Funcionais (RF)**, **Requisitos 
 - [x] Criar DTOs de Response como Java Records
 - [x] Implementar `GlobalExceptionHandler` (RFC 7807 `ProblemDetail`)
 - [x] Configurar `SecurityConfig` base e encoder BCrypt
-- [ ] Implementar `JwtService` (geração de token, extração de claims, validação de expiração)
-- [ ] Implementar `JwtAuthenticationFilter` (`OncePerRequestFilter`)
-- [ ] Implementar `AuthService` com métodos `cadastrar()` e `autenticar()`
-- [ ] Criar `AuthController` com endpoints `/api/auth/register` e `/api/auth/login`
+- [x] Implementar `JwtService` (geração de token, extração de claims, validação de expiração)
+- [x] Implementar `JwtAuthenticationFilter` (`OncePerRequestFilter`)
+- [x] Implementar `AuthService` com métodos `cadastrar()` e `autenticar()`
+- [x] Criar `AuthController` com endpoints `/api/auth/register` e `/api/auth/login`
 - [ ] Adicionar testes unitários para autenticação (senhas inválidas, e-mails duplicados)
 
 ### Fase 3: Regras de Negócio e Endpoints Core
@@ -83,9 +83,9 @@ Este documento centraliza todos os **Requisitos Funcionais (RF)**, **Requisitos 
 - [x] Criar modelos TypeScript tipados espelhando os DTOs do backend
 - [x] Criar serviço base `barbershop.service.ts` com Signals
 - [x] Criar tela de Agendamento do Cliente (Mobile-First com fluxo por etapas)
-- [ ] Criar serviço de autenticação `auth.service.ts` e `auth.interceptor.ts` (injetar JWT)
+- [x] Criar serviço de autenticação `auth.service.ts` e `auth.interceptor.ts` (injetar JWT)
+- [x] Criar tela de Login e Registro de Clientes/Barbeiros (`/auth`)
 - [ ] Criar Route Guards funcionais (`auth.guard.ts`, `role.guard.ts`)
-- [ ] Criar tela de Login e Registro de Clientes/Barbeiros
 - [ ] Conectar tela de Agendamento aos endpoints reais de `/api/servicos` e `/api/agendamentos`
 - [ ] Criar Painel do Barbeiro (`/painel-barbeiro`): grade diária com botões de aprovar/recusar
 - [ ] Criar tela de configuração de horários do Barbeiro

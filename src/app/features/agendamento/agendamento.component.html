@@ -115,7 +115,7 @@
               <span class="w-6 h-6 rounded-full bg-brass/15 border border-brass text-brass font-mono font-bold flex items-center justify-center text-xs">
                 I
               </span>
-              <h2 class="text-base sm:text-lg font-display font-bold text-ink-primary">Selecione o Serviço</h2>
+              <h2 class="text-base sm:text-lg font-display font-bold text-ink-primary">Selecionar Serviço</h2>
             </div>
             <span class="text-xs text-ink-muted font-mono">Duração & Valores</span>
           </div>
@@ -151,7 +151,7 @@
               <span class="w-6 h-6 rounded-full bg-brass/15 border border-brass text-brass font-mono font-bold flex items-center justify-center text-xs">
                 II
               </span>
-              <h2 class="text-base sm:text-lg font-display font-bold text-ink-primary">Escolha o Profissional</h2>
+              <h2 class="text-base sm:text-lg font-display font-bold text-ink-primary">Selecionar Barbeiro</h2>
             </div>
             <span class="text-xs text-ink-muted font-mono">Especialistas</span>
           </div>
@@ -331,11 +331,11 @@
             @if (submetendo()) {
               <span>Gravando Reserva...</span>
             } @else if (!temServico()) {
-              <span>1. Escolha um Serviço ➔</span>
+              <span>1. Selecionar Serviço ➔</span>
             } @else if (!temBarbeiro()) {
-              <span>2. Escolha um Barbeiro ➔</span>
+              <span>2. Selecionar Barbeiro ➔</span>
             } @else if (!temHorario()) {
-              <span>3. Escolha um Horário ➔</span>
+              <span>3. Selecionar Horário ➔</span>
             } @else {
               <span>Confirmar Agendamento ➔</span>
             }

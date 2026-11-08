@@ -1,4 +1,5 @@
 <div class="min-h-screen bg-surface-deep flex items-center justify-center p-4 sm:p-6 lg:p-8 relative">
+  <!-- Sutil textura de luz de fundo -->
   <div class="absolute inset-0 bg-grain pointer-events-none opacity-40"></div>
   <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-brass/5 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -20,8 +21,8 @@
       </p>
     </div>
 
-    <!-- Card Principal com MatCard -->
-    <mat-card class="!p-6 sm:!p-8 space-y-6">
+    <!-- Card Principal -->
+    <div class="bg-surface-card embossed-border rounded-2xl p-6 sm:p-8 space-y-6">
       
       <!-- Alternador de Abas Artesanal -->
       <div class="grid grid-cols-2 p-1 bg-surface-void rounded-xl border border-surface-border text-xs font-semibold">
@@ -46,44 +47,50 @@
       <!-- Alertas de Feedback -->
       @if (mensagemErro()) {
         <div class="p-3.5 rounded-xl bg-ember-900/40 border border-ember-500/40 text-ember-300 text-xs flex items-start gap-2 animate-fade-up">
-          <mat-icon class="!text-base !w-4 !h-4 text-ember-400">error</mat-icon>
+          <span class="text-ember-400 font-bold">✕</span>
           <span>{{ mensagemErro() }}</span>
         </div>
       }
 
       @if (mensagemSucesso()) {
         <div class="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs flex items-start gap-2 animate-fade-up">
-          <mat-icon class="!text-base !w-4 !h-4 text-emerald-400">check_circle</mat-icon>
+          <span class="text-emerald-400 font-bold">✓</span>
           <span>{{ mensagemSucesso() }}</span>
         </div>
       }
 
-      <!-- FORMULÁRIO DE LOGIN COM ANGULAR MATERIAL -->
+      <!-- FORMULÁRIO DE LOGIN -->
       @if (modo() === 'login') {
         <form [formGroup]="formLogin" (ngSubmit)="submeterLogin()" class="space-y-4">
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-label>E-mail Cadastrado</mat-label>
-            <input matInput type="email" formControlName="email" placeholder="seu@email.com">
-            <mat-icon matSuffix class="!text-ink-muted">email</mat-icon>
+          <div>
+            <label class="block text-xs font-medium text-ink-muted uppercase tracking-wider mb-1.5">
+              E-mail Cadastrado
+            </label>
+            <input type="email"
+                   formControlName="email"
+                   placeholder="seu@email.com"
+                   class="w-full bg-surface-void border border-surface-border focus:border-brass rounded-xl px-4 py-3 text-sm text-ink-primary placeholder:text-ink-faint focus:outline-none transition">
             @if (formLogin.get('email')?.touched && formLogin.get('email')?.invalid) {
-              <mat-error>Informe um e-mail válido.</mat-error>
+              <span class="text-[11px] text-ember-300 mt-1 block">Informe um e-mail válido.</span>
             }
-          </mat-form-field>
+          </div>
 
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Senha de Acesso</mat-label>
-            <input matInput type="password" formControlName="senha" placeholder="••••••••">
-            <mat-icon matSuffix class="!text-ink-muted">lock</mat-icon>
+          <div>
+            <label class="block text-xs font-medium text-ink-muted uppercase tracking-wider mb-1.5">
+              Senha de Acesso
+            </label>
+            <input type="password"
+                   formControlName="senha"
+                   placeholder="••••••••"
+                   class="w-full bg-surface-void border border-surface-border focus:border-brass rounded-xl px-4 py-3 text-sm text-ink-primary placeholder:text-ink-faint focus:outline-none transition">
             @if (formLogin.get('senha')?.touched && formLogin.get('senha')?.invalid) {
-              <mat-error>A senha deve ter no mínimo 6 caracteres.</mat-error>
+              <span class="text-[11px] text-ember-300 mt-1 block">A senha deve ter no mínimo 6 caracteres.</span>
             }
-          </mat-form-field>
+          </div>
 
-          <button mat-flat-button
-                  color="primary"
-                  type="submit"
+          <button type="submit"
                   [disabled]="carregando()"
-                  class="!w-full !py-6 !rounded-xl !text-xs !uppercase !tracking-wider">
+                  class="w-full py-3.5 px-4 rounded-xl bg-brass hover:bg-brass-light active:bg-brass-dark text-surface-void font-bold text-sm tracking-wide uppercase transition shadow-lg disabled:opacity-50 mt-2">
             @if (carregando()) {
               <span>Validando credenciais...</span>
             } @else {
@@ -93,53 +100,84 @@
         </form>
       }
 
-      <!-- FORMULÁRIO DE CADASTRO COM ANGULAR MATERIAL -->
+      <!-- FORMULÁRIO DE CADASTRO -->
       @if (modo() === 'cadastro') {
-        <form [formGroup]="formCadastro" (ngSubmit)="submeterCadastro()" class="space-y-4">
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Nome Completo</mat-label>
-            <input matInput formControlName="nome" placeholder="Ex: Pedro Henrique">
-            <mat-icon matSuffix class="!text-ink-muted">badge</mat-icon>
-          </mat-form-field>
+        <form [formGroup]="formCadastro" (ngSubmit)="submeterCadastro()" class="space-y-3.5">
+          <div>
+            <label class="block text-xs font-medium text-ink-muted uppercase tracking-wider mb-1">
+              Nome Completo
+            </label>
+            <input type="text"
+                   formControlName="nome"
+                   placeholder="Ex: Pedro Henrique"
+                   class="w-full bg-surface-void border border-surface-border focus:border-brass rounded-xl px-3.5 py-2.5 text-sm text-ink-primary placeholder:text-ink-faint focus:outline-none transition">
+          </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <mat-form-field appearance="outline" class="w-full">
-              <mat-label>E-mail</mat-label>
-              <input matInput type="email" formControlName="email" placeholder="nome@email.com">
-            </mat-form-field>
+            <div>
+              <label class="block text-xs font-medium text-ink-muted uppercase tracking-wider mb-1">
+                E-mail
+              </label>
+              <input type="email"
+                     formControlName="email"
+                     placeholder="nome@email.com"
+                     class="w-full bg-surface-void border border-surface-border focus:border-brass rounded-xl px-3.5 py-2.5 text-sm text-ink-primary placeholder:text-ink-faint focus:outline-none transition">
+            </div>
 
-            <mat-form-field appearance="outline" class="w-full">
-              <mat-label>WhatsApp</mat-label>
-              <input matInput type="tel" formControlName="telefone" placeholder="11999998888">
-            </mat-form-field>
+            <div>
+              <label class="block text-xs font-medium text-ink-muted uppercase tracking-wider mb-1">
+                WhatsApp
+              </label>
+              <input type="tel"
+                     formControlName="telefone"
+                     placeholder="11999998888"
+                     class="w-full bg-surface-void border border-surface-border focus:border-brass rounded-xl px-3.5 py-2.5 text-sm text-ink-primary placeholder:text-ink-faint focus:outline-none transition">
+            </div>
           </div>
 
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Senha Secreta</mat-label>
-            <input matInput type="password" formControlName="senha" placeholder="Mínimo 6 caracteres">
-            <mat-icon matSuffix class="!text-ink-muted">lock</mat-icon>
-          </mat-form-field>
+          <div>
+            <label class="block text-xs font-medium text-ink-muted uppercase tracking-wider mb-1">
+              Senha Secreta
+            </label>
+            <input type="password"
+                   formControlName="senha"
+                   placeholder="Mínimo 6 caracteres"
+                   class="w-full bg-surface-void border border-surface-border focus:border-brass rounded-xl px-3.5 py-2.5 text-sm text-ink-primary placeholder:text-ink-faint focus:outline-none transition">
+          </div>
 
-          <!-- Tipo de Perfil com MatRadioGroup -->
-          <div class="space-y-1.5">
-            <label class="block text-xs font-mono uppercase tracking-wider text-ink-muted">
+          <!-- Tipo de Perfil -->
+          <div>
+            <label class="block text-xs font-medium text-ink-muted uppercase tracking-wider mb-1.5">
               Tipo de Registro
             </label>
-            <mat-radio-group formControlName="role" class="grid grid-cols-2 gap-2">
-              <mat-radio-button value="ROLE_CLIENTE" color="primary" class="!text-xs">
-                Cliente
-              </mat-radio-button>
-              <mat-radio-button value="ROLE_BARBEIRO" color="primary" class="!text-xs">
-                Barbeiro
-              </mat-radio-button>
-            </mat-radio-group>
+            <div class="grid grid-cols-2 gap-2">
+              <label class="cursor-pointer border rounded-xl p-2.5 flex items-center gap-2 text-xs transition"
+                     [ngClass]="formCadastro.get('role')?.value === 'ROLE_CLIENTE'
+                       ? 'bg-brass/10 border-brass text-ink-primary'
+                       : 'bg-surface-void border-surface-border text-ink-muted'">
+                <input type="radio" formControlName="role" value="ROLE_CLIENTE" class="hidden">
+                <span class="w-3 h-3 rounded-full border flex items-center justify-center"
+                      [ngClass]="formCadastro.get('role')?.value === 'ROLE_CLIENTE' ? 'border-brass bg-brass' : 'border-ink-muted'">
+                </span>
+                <span>Cliente</span>
+              </label>
+
+              <label class="cursor-pointer border rounded-xl p-2.5 flex items-center gap-2 text-xs transition"
+                     [ngClass]="formCadastro.get('role')?.value === 'ROLE_BARBEIRO'
+                       ? 'bg-brass/10 border-brass text-ink-primary'
+                       : 'bg-surface-void border-surface-border text-ink-muted'">
+                <input type="radio" formControlName="role" value="ROLE_BARBEIRO" class="hidden">
+                <span class="w-3 h-3 rounded-full border flex items-center justify-center"
+                      [ngClass]="formCadastro.get('role')?.value === 'ROLE_BARBEIRO' ? 'border-brass bg-brass' : 'border-ink-muted'">
+                </span>
+                <span>Barbeiro</span>
+              </label>
+            </div>
           </div>
 
-          <button mat-flat-button
-                  color="primary"
-                  type="submit"
+          <button type="submit"
                   [disabled]="carregando()"
-                  class="!w-full !py-6 !rounded-xl !text-xs !uppercase !tracking-wider">
+                  class="w-full py-3.5 px-4 rounded-xl bg-brass hover:bg-brass-light active:bg-brass-dark text-surface-void font-bold text-sm tracking-wide uppercase transition shadow-lg disabled:opacity-50 mt-2">
             @if (carregando()) {
               <span>Criando sua credencial...</span>
             } @else {
@@ -149,12 +187,12 @@
         </form>
       }
 
-    </mat-card>
+    </div>
 
+    <!-- Rodapé Voltar -->
     <div class="text-center">
-      <a routerLink="/" class="text-xs text-ink-muted hover:text-brass transition flex items-center justify-center gap-1">
-        <mat-icon class="!text-sm !w-4 !h-4">arrow_back</mat-icon>
-        <span>Voltar para a Tela de Agendamento</span>
+      <a routerLink="/" class="text-xs text-ink-muted hover:text-brass transition">
+        ← Voltar para a Tela de Agendamento
       </a>
     </div>
 

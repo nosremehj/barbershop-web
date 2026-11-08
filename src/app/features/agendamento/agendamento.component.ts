@@ -2,18 +2,6 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-
-// Angular Material Modules
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatDividerModule } from '@angular/material/divider';
-
 import { BarbershopService } from '../../core/services/barbershop.service';
 import { AuthService } from '../../core/services/auth.service';
 import { ServicoResponse } from '../../core/models/servico.model';
@@ -23,21 +11,7 @@ import { AgendamentoResponse } from '../../core/models/agendamento.model';
 @Component({
   selector: 'app-agendamento',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    RouterLink,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatChipsModule,
-    MatDividerModule
-  ],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   templateUrl: './agendamento.component.html'
 })
 export class AgendamentoComponent implements OnInit {
@@ -50,7 +24,7 @@ export class AgendamentoComponent implements OnInit {
   barbeiros = signal<UsuarioResponse[]>([]);
   servicoSelecionado = signal<ServicoResponse | null>(null);
   barbeiroSelecionado = signal<UsuarioResponse | null>(null);
-  dataSelecionada = signal<Date>(new Date());
+  dataSelecionada = signal<string>(new Date().toISOString().split('T')[0]);
   horarioSelecionado = signal<string | null>(null);
   agendamentoConcluido = signal<AgendamentoResponse | null>(null);
   submetendo = signal<boolean>(false);
@@ -60,7 +34,7 @@ export class AgendamentoComponent implements OnInit {
   horariosTarde = signal<string[]>(['13:30', '14:15', '15:00', '15:45', '16:30', '17:15']);
   horariosNoite = signal<string[]>(['18:00', '18:45', '19:30']);
 
-  // Formulário do cliente com validações
+  // Formulário do cliente
   formCliente = this.fb.group({
     nome: ['', [Validators.required, Validators.minLength(3)]],
     telefone: ['', [Validators.required, Validators.pattern(/^[0-9]{10,11}$/)]],
@@ -73,15 +47,14 @@ export class AgendamentoComponent implements OnInit {
   apiOnline = this.barbershopService.apiOnline;
   apiStatus = this.barbershopService.apiStatus;
 
-  // Data mínima para agendamento (hoje)
-  minDate = new Date();
-
   ngOnInit(): void {
+    // Verifica conexão em tempo real com o Spring Boot
     this.barbershopService.checkApiHealth().subscribe();
 
+    // Carrega catálogo
     this.barbershopService.getServicos().subscribe(res => {
       this.servicos.set(res);
-      if (res.length > 0) this.servicoSelecionado.set(res[0]);
+      if (res.length > 0) this.servicoSelecionado.set(res[0]); // Seleciona primeiro por conveniência
     });
 
     this.barbershopService.getBarbeiros().subscribe(res => {
@@ -89,6 +62,7 @@ export class AgendamentoComponent implements OnInit {
       if (res.length > 0) this.barbeiroSelecionado.set(res[0]);
     });
 
+    // Se o cliente estiver logado com JWT, auto-preenche o formulário!
     const user = this.authService.currentUser();
     if (user) {
       this.formCliente.patchValue({
@@ -110,20 +84,6 @@ export class AgendamentoComponent implements OnInit {
     this.horarioSelecionado.set(horario);
   }
 
-  onDataChange(event: any): void {
-    if (event.value) {
-      this.dataSelecionada.set(event.value);
-    }
-  }
-
-  getDataFormatada(): string {
-    const d = this.dataSelecionada();
-    const ano = d.getFullYear();
-    const mes = String(d.getMonth() + 1).padStart(2, '0');
-    const dia = String(d.getDate()).padStart(2, '0');
-    return `${dia}/${mes}/${ano}`;
-  }
-
   finalizarAgendamento(): void {
     if (this.formCliente.invalid || !this.servicoSelecionado() || !this.barbeiroSelecionado() || !this.horarioSelecionado()) {
       this.formCliente.markAllAsTouched();
@@ -133,14 +93,12 @@ export class AgendamentoComponent implements OnInit {
     this.submetendo.set(true);
 
     const dados = this.formCliente.value;
-    const dataISO = this.dataSelecionada().toISOString().split('T')[0];
-
     const request = {
       clienteNome: dados.nome!,
       clienteTelefone: dados.telefone!,
       barbeiroId: this.barbeiroSelecionado()!.id,
       servicoId: this.servicoSelecionado()!.id,
-      dataHoraInicio: `${dataISO}T${this.horarioSelecionado()}:00`,
+      dataHoraInicio: `${this.dataSelecionada()}T${this.horarioSelecionado()}:00`,
       observacao: dados.observacao || ''
     };
 

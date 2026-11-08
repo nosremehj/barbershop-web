@@ -18,7 +18,6 @@
 
       <!-- Status da API & Acesso do Membro -->
       <div class="flex items-center gap-3">
-        <!-- Indicador de Status com acabamento de joia/metal -->
         <div class="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-mono border"
              [ngClass]="apiOnline() ? 'bg-surface-card border-emerald-600/40 text-emerald-300' : 'bg-surface-card border-brass/40 text-brass'">
           <span class="w-1.5 h-1.5 rounded-full" [ngClass]="apiOnline() ? 'bg-emerald-400 animate-pulse' : 'bg-brass animate-ping'"></span>
@@ -45,7 +44,7 @@
 
   <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-10 relative z-10">
 
-    <!-- HERO HEADER EDITORIAL (Fora do padrão genérico) -->
+    <!-- HERO HEADER EDITORIAL -->
     <header class="text-center space-y-3 max-w-xl mx-auto">
       <div class="inline-flex items-center gap-2 badge-stamp px-3 py-1 text-[10px] text-brass rounded font-mono">
         EST. 2026 • ALTA BARBEARIA
@@ -55,7 +54,7 @@
         <span class="italic font-normal text-brass">o rigor do tempo.</span>
       </h1>
       <p class="text-xs sm:text-sm text-ink-secondary leading-relaxed">
-        Reserve seu ritual de cuidados sem filas. Cortes clássicos, barboterapia tradicional com toalha quente e atendimento sob medida.
+        Selecione ou desmarque seus serviços, escolha seu barbeiro de confiança e defina seu horário em poucos toques.
       </p>
     </header>
 
@@ -118,19 +117,33 @@
               </span>
               <h2 class="text-base sm:text-lg font-display font-bold text-ink-primary">Selecione o Ritual</h2>
             </div>
-            <span class="text-xs text-ink-muted font-mono">Duração & Valores</span>
+            @if (temServico()) {
+              <button (click)="servicoSelecionado.set(null)"
+                      class="text-[11px] font-mono text-ember-300 hover:text-ember-200 underline">
+                ✕ Desmarcar ritual
+              </button>
+            } @else {
+              <span class="text-xs text-ink-muted font-mono">Clique para escolher</span>
+            }
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             @for (servico of servicos(); track servico.id) {
               <div (click)="selecionarServico(servico)"
-                   class="cursor-pointer p-4 sm:p-5 rounded-2xl transition-all relative embossed-border"
+                   class="cursor-pointer p-4 sm:p-5 rounded-2xl transition-all relative embossed-border group"
                    [ngClass]="servicoSelecionado()?.id === servico.id
-                     ? 'bg-surface-raised border-brass shadow-lg scale-[1.01]'
+                     ? 'bg-surface-raised border-brass shadow-lg scale-[1.01] ring-1 ring-brass/40'
                      : 'bg-surface-card hover:border-surface-borderHover'">
                 <div class="flex justify-between items-start gap-2">
                   <div>
-                    <h3 class="font-display font-bold text-ink-primary text-sm sm:text-base">{{ servico.nome }}</h3>
+                    <div class="flex items-center gap-2">
+                      <h3 class="font-display font-bold text-ink-primary text-sm sm:text-base">{{ servico.nome }}</h3>
+                      @if (servicoSelecionado()?.id === servico.id) {
+                        <span class="text-[10px] bg-brass/20 text-brass border border-brass/50 px-1.5 py-0.5 rounded font-mono">
+                          ✓ Ativo
+                        </span>
+                      }
+                    </div>
                     <span class="inline-block text-[11px] font-mono text-ink-muted mt-0.5">⏱ {{ servico.duracaoMinutos }} minutos</span>
                   </div>
                   <div class="text-right">
@@ -140,6 +153,11 @@
                   </div>
                 </div>
                 <p class="text-xs text-ink-secondary mt-2.5 leading-relaxed">{{ servico.descricao }}</p>
+                @if (servicoSelecionado()?.id === servico.id) {
+                  <span class="block text-[10px] text-brass/70 mt-2 font-mono">
+                    ✦ Clique novamente para remover este serviço
+                  </span>
+                }
               </div>
             }
           </div>
@@ -154,15 +172,22 @@
               </span>
               <h2 class="text-base sm:text-lg font-display font-bold text-ink-primary">Escolha o Profissional</h2>
             </div>
-            <span class="text-xs text-ink-muted font-mono">Especialistas</span>
+            @if (temBarbeiro()) {
+              <button (click)="barbeiroSelecionado.set(null)"
+                      class="text-[11px] font-mono text-ember-300 hover:text-ember-200 underline">
+                ✕ Desmarcar profissional
+              </button>
+            } @else {
+              <span class="text-xs text-ink-muted font-mono">Clique para escolher</span>
+            }
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             @for (barbeiro of barbeiros(); track barbeiro.id) {
               <div (click)="selecionarBarbeiro(barbeiro)"
-                   class="cursor-pointer p-4 rounded-2xl transition-all text-center flex flex-col items-center gap-2.5 embossed-border"
+                   class="cursor-pointer p-4 rounded-2xl transition-all text-center flex flex-col items-center gap-2.5 embossed-border relative group"
                    [ngClass]="barbeiroSelecionado()?.id === barbeiro.id
-                     ? 'bg-surface-raised border-brass shadow-lg scale-[1.01]'
+                     ? 'bg-surface-raised border-brass shadow-lg scale-[1.01] ring-1 ring-brass/40'
                      : 'bg-surface-card hover:border-surface-borderHover'">
                 <!-- Avatar com Moldura Nobre -->
                 <div class="w-14 h-14 rounded-full bg-surface-void border-2 p-0.5 flex items-center justify-center text-brass font-display font-black text-lg shadow-inner"
@@ -176,6 +201,11 @@
                     <span class="text-[10px] text-ink-muted font-mono">5.0</span>
                   </div>
                 </div>
+                @if (barbeiroSelecionado()?.id === barbeiro.id) {
+                  <span class="text-[10px] text-brass/80 font-mono mt-1">
+                    ✓ Selecionado (clique para trocar/remover)
+                  </span>
+                }
               </div>
             }
           </div>
@@ -190,18 +220,32 @@
               </span>
               <div>
                 <h2 class="text-base sm:text-lg font-display font-bold text-ink-primary">Data & Janelas de Horário</h2>
-                <p class="text-[11px] text-ink-muted">Os slots respeitam o tempo do corte selecionado ({{ tempoTotal() }} min)</p>
+                <p class="text-[11px] text-ink-muted">
+                  @if (temServico()) {
+                    <span>Duração prevista do ritual: {{ tempoTotal() }} min</span>
+                  } @else {
+                    <span>Selecione um ritual para calcular o tempo</span>
+                  }
+                </p>
               </div>
             </div>
 
-            <!-- Seletor de Data Estilizado -->
-            <input type="date"
-                   [value]="dataSelecionada()"
-                   (change)="dataSelecionada.set($any($event.target).value)"
-                   class="bg-surface-void border border-surface-border focus:border-brass rounded-xl px-3.5 py-2 text-xs font-mono text-ink-primary focus:outline-none transition">
+            <div class="flex items-center gap-3">
+              @if (temHorario()) {
+                <button (click)="horarioSelecionado.set(null)"
+                        class="text-[11px] font-mono text-ember-300 hover:text-ember-200 underline">
+                  ✕ Desmarcar horário ({{ horarioSelecionado() }})
+                </button>
+              }
+              <!-- Seletor de Data Estilizado -->
+              <input type="date"
+                     [value]="dataSelecionada()"
+                     (change)="dataSelecionada.set($any($event.target).value)"
+                     class="bg-surface-void border border-surface-border focus:border-brass rounded-xl px-3.5 py-2 text-xs font-mono text-ink-primary focus:outline-none transition">
+            </div>
           </div>
 
-          <!-- Grade por Turnos -->
+          <!-- Grade por Turnos com Toggle Ativo -->
           <div class="space-y-4 pt-2">
             <!-- Turno da Manhã -->
             <div>
@@ -212,7 +256,7 @@
                           (click)="selecionarHorario(h)"
                           class="py-2.5 px-3 rounded-xl text-xs font-mono font-medium border transition-all"
                           [ngClass]="horarioSelecionado() === h
-                            ? 'bg-brass text-surface-void font-bold border-brass shadow-md'
+                            ? 'bg-brass text-surface-void font-bold border-brass shadow-md ring-1 ring-brass/50'
                             : 'bg-surface-void text-ink-secondary border-surface-border hover:border-brass/50'">
                     {{ h }}
                   </button>
@@ -229,7 +273,7 @@
                           (click)="selecionarHorario(h)"
                           class="py-2.5 px-3 rounded-xl text-xs font-mono font-medium border transition-all"
                           [ngClass]="horarioSelecionado() === h
-                            ? 'bg-brass text-surface-void font-bold border-brass shadow-md'
+                            ? 'bg-brass text-surface-void font-bold border-brass shadow-md ring-1 ring-brass/50'
                             : 'bg-surface-void text-ink-secondary border-surface-border hover:border-brass/50'">
                     {{ h }}
                   </button>
@@ -246,7 +290,7 @@
                           (click)="selecionarHorario(h)"
                           class="py-2.5 px-3 rounded-xl text-xs font-mono font-medium border transition-all"
                           [ngClass]="horarioSelecionado() === h
-                            ? 'bg-brass text-surface-void font-bold border-brass shadow-md'
+                            ? 'bg-brass text-surface-void font-bold border-brass shadow-md ring-1 ring-brass/50'
                             : 'bg-surface-void text-ink-secondary border-surface-border hover:border-brass/50'">
                     {{ h }}
                   </button>
@@ -292,14 +336,18 @@
           </div>
         </section>
 
-        <!-- BARRA FLUTUANTE DE FINALIZAÇÃO (Estilo alfaiataria) -->
+        <!-- BARRA FLUTUANTE DE FINALIZAÇÃO (Com validação inteligente de passos) -->
         <div class="bg-surface-void/95 backdrop-blur-lg border border-brass/40 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 sticky bottom-4 shadow-2xl z-40">
           <div class="flex items-center gap-4">
             <div>
               <span class="text-[10px] font-mono uppercase tracking-widest text-ink-muted block">Resumo do Pedido</span>
               <div class="flex items-baseline gap-2">
-                <span class="text-2xl font-display font-black text-brass">R$ {{ valorTotal() | number:'1.2-2' }}</span>
-                <span class="text-xs text-ink-muted">({{ tempoTotal() }} min)</span>
+                @if (temServico()) {
+                  <span class="text-2xl font-display font-black text-brass">R$ {{ valorTotal() | number:'1.2-2' }}</span>
+                  <span class="text-xs text-ink-muted">({{ tempoTotal() }} min)</span>
+                } @else {
+                  <span class="text-base font-display font-medium text-ink-muted">Nenhum ritual selecionado</span>
+                }
               </div>
             </div>
 
@@ -310,11 +358,21 @@
             }
           </div>
 
+          <!-- Botão Inteligente com orientador de seleção -->
           <button (click)="finalizarAgendamento()"
-                  [disabled]="submetendo()"
-                  class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-brass hover:bg-brass-light active:bg-brass-dark text-surface-void font-bold text-xs uppercase tracking-widest transition shadow-lg disabled:opacity-50">
+                  [disabled]="!selecaoCompleta() || submetendo()"
+                  class="w-full sm:w-auto px-8 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition shadow-lg"
+                  [ngClass]="selecaoCompleta()
+                    ? 'bg-brass hover:bg-brass-light active:bg-brass-dark text-surface-void cursor-pointer'
+                    : 'bg-surface-raised border border-surface-border text-ink-muted cursor-not-allowed opacity-75'">
             @if (submetendo()) {
               <span>Gravando Reserva...</span>
+            } @else if (!temServico()) {
+              <span>1. Escolha um Ritual ➔</span>
+            } @else if (!temBarbeiro()) {
+              <span>2. Escolha um Barbeiro ➔</span>
+            } @else if (!temHorario()) {
+              <span>3. Escolha um Horário ➔</span>
             } @else {
               <span>Confirmar Agendamento ➔</span>
             }

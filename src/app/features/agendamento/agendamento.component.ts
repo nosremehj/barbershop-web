@@ -19,7 +19,7 @@ export class AgendamentoComponent implements OnInit {
   readonly authService = inject(AuthService);
   private readonly fb = inject(FormBuilder);
 
-  // Signals para reatividade pura do Angular 18
+  // Signals para reatividade pura do Angular 18 (iniciam vazios, sem seleção forçada)
   servicos = signal<ServicoResponse[]>([]);
   barbeiros = signal<UsuarioResponse[]>([]);
   servicoSelecionado = signal<ServicoResponse | null>(null);
@@ -44,6 +44,14 @@ export class AgendamentoComponent implements OnInit {
   // Computeds
   valorTotal = computed(() => this.servicoSelecionado()?.preco || 0);
   tempoTotal = computed(() => this.servicoSelecionado()?.duracaoMinutos || 0);
+  temServico = computed(() => !!this.servicoSelecionado());
+  temBarbeiro = computed(() => !!this.barbeiroSelecionado());
+  temHorario = computed(() => !!this.horarioSelecionado());
+
+  selecaoCompleta = computed(() => {
+    return this.temServico() && this.temBarbeiro() && this.temHorario();
+  });
+
   apiOnline = this.barbershopService.apiOnline;
   apiStatus = this.barbershopService.apiStatus;
 
@@ -51,18 +59,16 @@ export class AgendamentoComponent implements OnInit {
     // Verifica conexão em tempo real com o Spring Boot
     this.barbershopService.checkApiHealth().subscribe();
 
-    // Carrega catálogo
+    // Carrega catálogo SEM pré-seleção forçada
     this.barbershopService.getServicos().subscribe(res => {
       this.servicos.set(res);
-      if (res.length > 0) this.servicoSelecionado.set(res[0]); // Seleciona primeiro por conveniência
     });
 
     this.barbershopService.getBarbeiros().subscribe(res => {
       this.barbeiros.set(res);
-      if (res.length > 0) this.barbeiroSelecionado.set(res[0]);
     });
 
-    // Se o cliente estiver logado com JWT, auto-preenche o formulário!
+    // Se o cliente estiver logado com JWT, auto-preenche o formulário de contato
     const user = this.authService.currentUser();
     if (user) {
       this.formCliente.patchValue({
@@ -72,20 +78,39 @@ export class AgendamentoComponent implements OnInit {
     }
   }
 
+  // Toggle de Serviço: clica para selecionar; clica no mesmo para desmarcar!
   selecionarServico(servico: ServicoResponse): void {
-    this.servicoSelecionado.set(servico);
+    if (this.servicoSelecionado()?.id === servico.id) {
+      this.servicoSelecionado.set(null);
+    } else {
+      this.servicoSelecionado.set(servico);
+    }
   }
 
+  // Toggle de Barbeiro: clica para selecionar; clica no mesmo para desmarcar!
   selecionarBarbeiro(barbeiro: UsuarioResponse): void {
-    this.barbeiroSelecionado.set(barbeiro);
+    if (this.barbeiroSelecionado()?.id === barbeiro.id) {
+      this.barbeiroSelecionado.set(null);
+    } else {
+      this.barbeiroSelecionado.set(barbeiro);
+    }
   }
 
+  // Toggle de Horário: clica para selecionar; clica no mesmo para desmarcar!
   selecionarHorario(horario: string): void {
-    this.horarioSelecionado.set(horario);
+    if (this.horarioSelecionado() === horario) {
+      this.horarioSelecionado.set(null);
+    } else {
+      this.horarioSelecionado.set(horario);
+    }
   }
 
   finalizarAgendamento(): void {
-    if (this.formCliente.invalid || !this.servicoSelecionado() || !this.barbeiroSelecionado() || !this.horarioSelecionado()) {
+    if (!this.selecaoCompleta()) {
+      return;
+    }
+
+    if (this.formCliente.invalid) {
       this.formCliente.markAllAsTouched();
       return;
     }
@@ -116,6 +141,8 @@ export class AgendamentoComponent implements OnInit {
 
   novoAgendamento(): void {
     this.agendamentoConcluido.set(null);
+    this.servicoSelecionado.set(null);
+    this.barbeiroSelecionado.set(null);
     this.horarioSelecionado.set(null);
     this.formCliente.reset();
   }
